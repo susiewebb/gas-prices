@@ -240,3 +240,42 @@ dw_data_to_chart(new_final_df,
 
 #Republishing the chart
 dw_publish_chart(gasMap)
+
+###Now for state-by-state maps
+dw_codes <- read_csv('codes.csv')
+
+state_maps <- new_final_df %>%
+  inner_join(dw_codes, by = c('state_name' = 'state_name'))
+
+state_amend <- function(i){
+  state_data <- state_maps %>% filter(state_name == i)
+  
+  code <- as.character(state_data$code[1])
+  full <- state_data$name[1]
+  
+  print(paste("STATE:", state))
+  print(paste("CODE:", code))
+
+  
+  
+  dw_data_to_chart(state_data, code)
+  
+  dw_edit_chart(
+    chart_id = code,
+    title = paste0(full, " gas prices as of ", today_head),
+    intro = paste0("Here are the latest gas prices by county or equivalent in ", full, "."),
+    byline = "Susie Webb/Get the Facts Data Team",
+    source_name = "AAA",
+    source_url = "aaa.com",
+    annotate = "<i>Data will update daily and represents the previous day's average cost for regular gas. Any unknown or missing values mean that there was not enough data to calculate the price.</i>"
+  )
+  
+  dw_publish_chart(code)
+}
+
+for (i in unique(state_maps$state_name)) {
+  state_amend(i)
+}
+  
+
+
