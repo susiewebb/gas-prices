@@ -253,10 +253,6 @@ state_amend <- function(i){
   code <- as.character(state_data$code[1])
   full <- state_data$name[1]
   
-  print(paste("STATE:", state))
-  print(paste("CODE:", code))
-
-  
   
   dw_data_to_chart(state_data, code)
   
