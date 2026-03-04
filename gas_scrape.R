@@ -141,7 +141,7 @@ new_data <- final_df
 dw_edit_chart(
   chart_id = gasTable,
   title = paste0('Current gas prices by county across the U.S. as of ', today_head),
-  intro = "Search by county in the table below to see what the gas prices are where you're traveling this holiday season. The table is sorted from most to least expensive.",
+  intro = "Search by county in the table below to see what the gas prices are in your area. The table is sorted from most to least expensive.",
   byline = 'Susie Webb/Get the Facts Data Team',
   source_name = 'AAA',
   source_url = 'aaa.com',
@@ -207,8 +207,8 @@ new_final_df <- final_df %>%
 ###Datawrapper map
 dw_edit_chart(
   chart_id = gasMap,
-  title = paste0('Gas prices this holiday season as of ', today_head),
-  intro = 'Here are the latest gas prices by county or equivalent across the U.S. as drivers take to the roads this week for the holidays.',
+  title = paste0('Gas prices as of ', today_head),
+  intro = 'Here are the latest gas prices by county or equivalent across the U.S.',
   byline = 'Susie Webb/Get the Facts Data Team',
   source_name = 'AAA',
   source_url = 'aaa.com',
