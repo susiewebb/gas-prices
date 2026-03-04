@@ -30,43 +30,61 @@ old_data <- read_csv('gas_prices.csv')
 
 #Scraping today's gas data
 parse_url <- function(map_id) {
-  url <- paste0("https://gasprices.aaa.com/index.php?premiumhtml5map_js_data=true&map_id=", map_id)
-  response <- GET(url)
-  data <- content(response, "text")
+  url <- paste0(
+    "https://gasprices.aaa.com/index.php?premiumhtml5map_js_data=true&map_id=",
+    map_id
+  )
+  
+  response <- httr::GET(url)
+  httr::stop_for_status(response)
+  
+  data <- httr::content(response, "text", encoding = "UTF-8")
   
   #Pulling out the JS
-  js_block <- str_extract(
+  js_block <- stringr::str_extract(
     data,
     "(?s)var\\s+premiumhtml5map_map_cfg_\\d+\\s*=\\s*\\{.*?\\};"
   )
   
-  #Accounting for NAs
   if (is.na(js_block)) {
-    return(tibble(name = character(), comment = character(),
-                  state_id = integer()))
+    return(tibble::tibble(name = character(), comment = character(), state_id = integer()))
   }
   
-  var_name <- str_match(js_block, "var\\s+(premiumhtml5map_map_cfg_\\d+)\\s*=")[,2]
+  #Cleaning JS
+  js_block <- gsub(":\\s*,", ": null,", js_block, perl = TRUE)
   
-  ctx <- v8()
-  ctx$eval(js_block)
+  #Removing trailing commas
+  js_block <- gsub(",\\s*([}\\]])", "\\1", js_block, perl = TRUE)
+  
+  #More cleaning
+  js_block <- gsub("[\u2028\u2029]", " ", js_block, perl = TRUE)
+  
+  var_name <- stringr::str_match(js_block, "var\\s+(premiumhtml5map_map_cfg_\\d+)\\s*=")[, 2]
+  
+  ctx <- V8::v8()
+  
+  #Test catch
+  tryCatch(
+    ctx$eval(js_block),
+    error = function(e) {
+      message("\nV8 failed while parsing map_id = ", map_id)
+      message("First 1500 chars of cleaned js_block:\n")
+      message(substr(js_block, 1, 1500))
+      stop(e)
+    }
+  )
   
   json_map <- ctx$eval(paste0("JSON.stringify(", var_name, ".map_data)"))
+  map_data <- jsonlite::fromJSON(json_map)
   
-  map_data <- fromJSON(json_map)
-  
-  #Build df
-  df <- map_data %>%
-    map_dfr(~tibble(
-      name = .x$name %||% NA_character_,
+  map_data %>%
+    purrr::map_dfr(~tibble::tibble(
+      name    = .x$name    %||% NA_character_,
       comment = .x$comment %||% NA_character_
     )) %>%
-    mutate(
-      state_id = map_id,
-    )
-  
-  return(df)
+    dplyr::mutate(state_id = map_id)
 }
+
 
 #Run it through each state
 all_data <- map_dfr(setdiff(1:52, 17), parse_url)
