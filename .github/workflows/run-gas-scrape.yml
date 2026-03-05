@@ -94,6 +94,7 @@ jobs:
         
             echo "Staging expected CSVs…"
             git add gas_prices.csv || true
+            git add gas_data_log.csv || true
         
             if git diff --cached --quiet; then
               echo "No changes to commit."
