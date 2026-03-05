@@ -275,6 +275,9 @@ for (i in unique(state_maps$state_name)) {
   
 
 #####Updating each of the tables
+
+table_codes <- read_csv('table_codes.csv')
+
 money_to_num <- function(x) as.numeric(str_remove(x, "\\$"))
 
 parse_mixed_date <- function(x) {
@@ -358,17 +361,13 @@ update_one_chart_and_return_logrow <- function(state, chart_id, name) {
   )
 }
 
-# ----------------------------
-# table_codes mapping
-# ----------------------------
+
 if (!"chart_id" %in% names(table_codes) && "chart_ids" %in% names(table_codes)) {
   table_codes <- table_codes %>% rename(chart_id = chart_ids)
 }
 stopifnot(all(c("state", "chart_id", "name") %in% names(table_codes)))
 
-# ----------------------------
-# Read existing log
-# ----------------------------
+
 log_path <- "gas_data_log.csv"
 
 gas_data_log <- if (file.exists(log_path)) {
@@ -385,9 +384,7 @@ gas_data_log <- if (file.exists(log_path)) {
   )
 }
 
-# ----------------------------
-# Collect today's rows
-# ----------------------------
+
 daily_log <- table_codes %>%
   select(state, chart_id, name) %>%
   pmap_dfr(~ update_one_chart_and_return_logrow(..1, ..2, ..3))
@@ -401,9 +398,7 @@ gas_data_log_updated <- bind_rows(gas_data_log, daily_new) %>%
 
 write_csv(gas_data_log_updated, log_path)
 
-# ----------------------------
-# Upload FULL history to each chart (Date stays Date)
-# ----------------------------
+
 table_codes %>%
   select(state, chart_id) %>%
   pwalk(function(state, chart_id) {
