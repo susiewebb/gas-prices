@@ -160,7 +160,7 @@ dw_edit_chart(
   chart_id = gasTable,
   title = paste0('Current gas prices by county across the U.S. as of ', today_head),
   intro = "Search by county in the table below to see what the gas prices are in your area. The table is sorted from most to least expensive.",
-  byline = 'Susie Webb/Get the Facts Data Team',
+  byline = paste0("Susie Webb/<a href='https://qredirect.htvapps.net/?redirectUri=data-journalism' target='_blank'>Get the Facts Data Team</a>"),
   source_name = 'AAA',
   source_url = 'aaa.com',
   annotate = paste0("<i>Data will update daily and represents the previous day's average cost for regular gas. Any NA values mean that there was not enough data to calculate the price.")
@@ -227,7 +227,7 @@ dw_edit_chart(
   chart_id = gasMap,
   title = paste0('Gas prices as of ', today_head),
   intro = 'Here are the latest gas prices by county or equivalent across the U.S.',
-  byline = 'Susie Webb/Get the Facts Data Team',
+  byline = paste0("Susie Webb/<a href='https://qredirect.htvapps.net/?redirectUri=data-journalism' target='_blank'>Get the Facts Data Team</a>"),
   source_name = 'AAA',
   source_url = 'aaa.com',
   annotate = paste0("<i>Data will update daily and represents the previous day's average cost for regular gas. AAA only has gas data for Connecticut's old county boundaries. Any unknown or missing values means that there was not enough data to calculate the price.")
@@ -260,7 +260,7 @@ state_amend <- function(i){
     chart_id = code,
     title = paste0(full, " gas prices as of ", today_head),
     intro = paste0("Here are the latest gas prices by county or equivalent in ", full, "."),
-    byline = "Susie Webb/Get the Facts Data Team",
+    byline = paste0("Susie Webb/<a href='https://qredirect.htvapps.net/?redirectUri=data-journalism' target='_blank'>Get the Facts Data Team</a>"),
     source_name = "AAA",
     source_url = "aaa.com",
     annotate = "<i>Data will update daily and represents the previous day's average cost for regular gas. Any unknown or missing values mean that there was not enough data to calculate the price.</i>"
@@ -346,7 +346,7 @@ update_one_chart_and_return_logrow <- function(state, chart_id, name) {
   dw_edit_chart(
     chart_id = chart_id,
     title = sprintf("%s gas prices as of %s", name, today_head),
-    byline = "Susie Webb/Get the Facts Data Team",
+    byline = paste0("Susie Webb/<a href='https://qredirect.htvapps.net/?redirectUri=data-journalism' target='_blank'>Get the Facts Data Team</a>"),
     source_name = "AAA",
     source_url = "aaa.com",
     annotate = "<i>Data will update daily and represents the previous day's average cost for regular gas."
