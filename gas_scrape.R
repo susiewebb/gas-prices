@@ -397,7 +397,7 @@ gas_data_log_updated <- bind_rows(gas_data_log, daily_new) %>%
   mutate(date = parse_mixed_date(date)) %>%
   arrange(date, state)
 
-write_csv(gas_data_log_updated, log_path)
+write_csv(gas_data_log_updated, "gas_data_log.csv")
 
 
 table_codes %>%
