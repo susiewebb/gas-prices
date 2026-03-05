@@ -274,4 +274,147 @@ for (i in unique(state_maps$state_name)) {
 }
   
 
+#####Updating each of the tables
+money_to_num <- function(x) as.numeric(str_remove(x, "\\$"))
 
+parse_mixed_date <- function(x) {
+  # handles Date, "YYYY-MM-DD", "3/5/26", "3-5-26", etc.
+  if (inherits(x, "Date")) return(x)
+  
+  x <- as.character(x) %>% str_trim()
+  x[x == ""] <- NA_character_
+  
+  d <- suppressWarnings(ymd(x))
+  need <- is.na(d) & !is.na(x)
+  
+  if (any(need)) {
+    x2 <- x[need] %>% str_replace_all("-", "/")
+    d[need] <- suppressWarnings(mdy(x2))
+  }
+  d
+}
+
+scrape_state_aaa <- function(st) {
+  url <- paste0("https://gasprices.aaa.com/?state=", st)
+  
+  page <- httr::GET(url) %>%
+    httr::content("text", encoding = "UTF-8") %>%
+    read_html()
+  
+  tab <- page %>%
+    html_elements("table") %>%
+    map(~ html_table(.x, fill = TRUE)) %>%
+    keep(~ ncol(.x) >= 5 && any(.x[[1]] == "Current Avg.")) %>%
+    pluck(1)
+  
+  names(tab) <- paste0("V", seq_along(tab))
+  
+  tab %>%
+    filter(V1 %in% c("Current Avg.", "Yesterday Avg.", "Week Ago Avg.", "Month Ago Avg.", "Year Ago Avg.")) %>%
+    transmute(
+      state  = st,
+      metric = V1,
+      regular = money_to_num(V2),
+      diesel  = money_to_num(V5)
+    )
+}
+
+metrics_map <- function(df) {
+  df %>%
+    mutate(key = recode(metric,
+                        "Current Avg."   = "Current",
+                        "Yesterday Avg." = "Yesterday",
+                        "Week Ago Avg."  = "Week",
+                        "Month Ago Avg." = "Month",
+                        "Year Ago Avg."  = "Year"
+    )) %>%
+    select(key, regular, diesel) %>%
+    pivot_wider(names_from = key, values_from = c(regular, diesel)) %>%
+    as.list()
+}
+
+update_one_chart_and_return_logrow <- function(state, chart_id, name) {
+  Sys.sleep(0.5)
+  
+  m <- scrape_state_aaa(state) %>%
+    metrics_map()
+  
+  dw_edit_chart(
+    chart_id = chart_id,
+    title = sprintf("%s gas prices as of %s", name, today_head),
+    byline = "Susie Webb/Get the Facts Data Team",
+    source_name = "AAA",
+    source_url = "aaa.com",
+    annotate = "<i>Data will update daily and represents the previous day's average cost for regular gas."
+  )
+  
+  tibble(
+    date = today_date,
+    state = state,
+    name = name,
+    chart_id = chart_id,
+    regular = m$regular_Current,
+    diesel  = m$diesel_Current
+  )
+}
+
+# ----------------------------
+# table_codes mapping
+# ----------------------------
+if (!"chart_id" %in% names(table_codes) && "chart_ids" %in% names(table_codes)) {
+  table_codes <- table_codes %>% rename(chart_id = chart_ids)
+}
+stopifnot(all(c("state", "chart_id", "name") %in% names(table_codes)))
+
+# ----------------------------
+# Read existing log
+# ----------------------------
+log_path <- "gas_data_log.csv"
+
+gas_data_log <- if (file.exists(log_path)) {
+  read_csv(log_path, show_col_types = FALSE) %>%
+    mutate(date = parse_mixed_date(date))
+} else {
+  tibble(
+    date = as.Date(character()),
+    state = character(),
+    name = character(),
+    chart_id = character(),
+    regular = double(),
+    diesel = double()
+  )
+}
+
+# ----------------------------
+# Collect today's rows
+# ----------------------------
+daily_log <- table_codes %>%
+  select(state, chart_id, name) %>%
+  pmap_dfr(~ update_one_chart_and_return_logrow(..1, ..2, ..3))
+
+daily_new <- daily_log %>%
+  anti_join(gas_data_log, by = c("date", "state"))
+
+gas_data_log_updated <- bind_rows(gas_data_log, daily_new) %>%
+  mutate(date = parse_mixed_date(date)) %>%
+  arrange(date, state)
+
+write_csv(gas_data_log_updated, log_path)
+
+# ----------------------------
+# Upload FULL history to each chart (Date stays Date)
+# ----------------------------
+table_codes %>%
+  select(state, chart_id) %>%
+  pwalk(function(state, chart_id) {
+    chart_data <- gas_data_log_updated %>%
+      filter(state == !!state) %>%
+      arrange(date) %>%
+      transmute(
+        Date = date,
+        Regular = regular,
+        Diesel = diesel
+      )
+    
+    dw_data_to_chart(chart_data, chart_id, parse_dates = TRUE)
+  })
