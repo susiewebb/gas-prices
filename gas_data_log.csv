@@ -1,27 +1,53 @@
 date,state,name,chart_id,regular,diesel
-3/4/26,AL,Alabama,O2LpQ,2.885,3.733
-3/4/26,AR,Arkansas,ZZeHE,2.836,3.722
-3/4/26,CA,California,TR1fb,4.736,5.274
-3/4/26,FL,Florida,81MW6,3.19,4.102
-3/4/26,GA,Georgia,hoL9e,3.127,3.975
-3/4/26,IA,Iowa,n3zag,2.933,3.903
-3/4/26,IN,Indiana,GYXij,3.145,4.144
-3/4/26,KS,Kansas,wI9It,2.79,3.615
-3/4/26,KY,Kentucky,rqoRa,2.874,3.671
-3/4/26,LA,Louisiana,9zxIu,2.835,3.63
-3/4/26,MA,Massachusetts,XBEr9,3.047,4.153
-3/4/26,MD,Maryland,FgqC4,3.115,4.206
-3/4/26,ME,Maine,fGoLO,3.094,4.46
-3/4/26,MO,Missouri,V4yLR,2.894,3.687
-3/4/26,MS,Mississippi,pdpJJ,2.739,3.545
-3/4/26,NC,North Carolina,QFEEu,2.995,3.926
-3/4/26,NE,Nebraska,ljBMq,2.975,3.677
-3/4/26,NH,New Hampshire,8ZyHd,3.009,4.231
-3/4/26,NM,New Mexico,k4B3U,3.035,3.884
-3/4/26,NY,New York,l1A5F,3.105,4.144
-3/4/26,OH,Ohio,iFOWX,3.095,4.181
-3/4/26,OK,Oklahoma,CtVgp,2.735,3.584
-3/4/26,PA,Pennsylvania,m4if7,3.297,4.461
-3/4/26,SC,South Carolina,xOS1p,2.906,3.867
-3/4/26,VT,Vermont,A4Ngg,3.108,4.316
-3/4/26,WI,Wisconsin,c9uRU,2.936,3.898
+2026-03-04,AL,Alabama,O2LpQ,2.885,3.733
+2026-03-04,AR,Arkansas,ZZeHE,2.836,3.722
+2026-03-04,CA,California,TR1fb,4.736,5.274
+2026-03-04,FL,Florida,81MW6,3.19,4.102
+2026-03-04,GA,Georgia,hoL9e,3.127,3.975
+2026-03-04,IA,Iowa,n3zag,2.933,3.903
+2026-03-04,IN,Indiana,GYXij,3.145,4.144
+2026-03-04,KS,Kansas,wI9It,2.79,3.615
+2026-03-04,KY,Kentucky,rqoRa,2.874,3.671
+2026-03-04,LA,Louisiana,9zxIu,2.835,3.63
+2026-03-04,MA,Massachusetts,XBEr9,3.047,4.153
+2026-03-04,MD,Maryland,FgqC4,3.115,4.206
+2026-03-04,ME,Maine,fGoLO,3.094,4.46
+2026-03-04,MO,Missouri,V4yLR,2.894,3.687
+2026-03-04,MS,Mississippi,pdpJJ,2.739,3.545
+2026-03-04,NC,North Carolina,QFEEu,2.995,3.926
+2026-03-04,NE,Nebraska,ljBMq,2.975,3.677
+2026-03-04,NH,New Hampshire,8ZyHd,3.009,4.231
+2026-03-04,NM,New Mexico,k4B3U,3.035,3.884
+2026-03-04,NY,New York,l1A5F,3.105,4.144
+2026-03-04,OH,Ohio,iFOWX,3.095,4.181
+2026-03-04,OK,Oklahoma,CtVgp,2.735,3.584
+2026-03-04,PA,Pennsylvania,m4if7,3.297,4.461
+2026-03-04,SC,South Carolina,xOS1p,2.906,3.867
+2026-03-04,VT,Vermont,A4Ngg,3.108,4.316
+2026-03-04,WI,Wisconsin,c9uRU,2.936,3.898
+2026-03-05,AL,Alabama,O2LpQ,2.942,3.878
+2026-03-05,AR,Arkansas,ZZeHE,2.903,3.841
+2026-03-05,CA,California,TR1fb,4.81,5.425
+2026-03-05,FL,Florida,81MW6,3.241,4.233
+2026-03-05,GA,Georgia,hoL9e,3.174,4.135
+2026-03-05,IA,Iowa,n3zag,2.986,4.015
+2026-03-05,IN,Indiana,GYXij,3.188,4.279
+2026-03-05,KS,Kansas,wI9It,2.838,3.686
+2026-03-05,KY,Kentucky,rqoRa,2.933,3.824
+2026-03-05,LA,Louisiana,9zxIu,2.908,3.783
+2026-03-05,MA,Massachusetts,XBEr9,3.098,4.269
+2026-03-05,MD,Maryland,FgqC4,3.24,4.379
+2026-03-05,ME,Maine,fGoLO,3.152,4.543
+2026-03-05,MO,Missouri,V4yLR,2.927,3.754
+2026-03-05,MS,Mississippi,pdpJJ,2.818,3.733
+2026-03-05,NC,North Carolina,QFEEu,3.044,4.06
+2026-03-05,NE,Nebraska,ljBMq,3.022,3.78
+2026-03-05,NH,New Hampshire,8ZyHd,3.06,4.315
+2026-03-05,NM,New Mexico,k4B3U,3.076,3.987
+2026-03-05,NY,New York,l1A5F,3.16,4.241
+2026-03-05,OH,Ohio,iFOWX,3.127,4.309
+2026-03-05,OK,Oklahoma,CtVgp,2.791,3.675
+2026-03-05,PA,Pennsylvania,m4if7,3.356,4.546
+2026-03-05,SC,South Carolina,xOS1p,2.944,3.975
+2026-03-05,VT,Vermont,A4Ngg,3.161,4.401
+2026-03-05,WI,Wisconsin,c9uRU,2.965,4.034
