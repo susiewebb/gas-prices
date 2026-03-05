@@ -276,7 +276,7 @@ for (i in unique(state_maps$state_name)) {
 
 #####Updating each of the tables
 
-table_codes <- read_csv('table_codes.csv')
+table_codes <- read_csv("table_codes.csv")
 
 money_to_num <- function(x) as.numeric(str_remove(x, "\\$"))
 
