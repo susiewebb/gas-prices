@@ -275,6 +275,7 @@ for (i in unique(state_maps$state_name)) {
   
 
 #####Updating each of the tables
+today_date <- with_tz(Sys.time(), tz = "America/New_York") %>% as.Date()
 
 table_codes <- read_csv("table_codes.csv")
 
