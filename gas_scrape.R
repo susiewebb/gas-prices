@@ -13,6 +13,7 @@ library(tidycensus)
 api_key <- Sys.getenv("API_KEY")
 gasTable <- Sys.getenv("GAS_TABLE_KEY")
 gasMap <- Sys.getenv("GAS_MAP_KEY")
+natKey <- Sys.getenv("NATIONAL_KEY")
 
 datawrapper_auth(api_key =  api_key, overwrite=TRUE)
 
@@ -417,3 +418,60 @@ table_codes %>%
     dw_publish_chart(chart_id)
 
   })
+
+
+###NOW UPDATING THE DAILY NATIONAL VERSION
+##Pulling daily national average cost
+url <- "https://gasprices.aaa.com"
+
+page <- read_html(url)
+
+#Pulling current average row
+row_node <- html_node(
+  page,
+  xpath = "//tr[td[1][normalize-space()='Current Avg.']]"
+) %>%
+  html_elements("td") %>%
+  html_text(trim = TRUE)
+
+#Removing label
+prices <- row_node[-1]
+
+#Converting
+prices_num <- money_to_num(prices)
+
+#Unleaded price
+unleaded_price <- prices_num[1]
+
+#Diesal price
+diesel_price <- prices_num[4]
+
+# Read existing CSV
+df <- read_csv("aaa-nat-gas-prices.csv")
+
+# Format today's date like 03/04/2026
+today_str <- format(Sys.Date(), "%m/%d/%Y")
+
+new_row <- tibble(
+  `Start Date` = today_str,
+  `Unleaded Price` = unleaded_price,
+  `Diesel Price` = diesel_price
+)
+
+#Prevent duplicate dates
+df <- df %>% filter(`Start Date` != today_str)
+
+# Append new row
+df_updated <- bind_rows(df, new_row)
+
+#Adding to DW
+dw_data_to_chart(
+  df_updated,
+  chart_id = natKey
+)
+
+dw_publish_chart(natKey)
+
+# Write back to file
+write_csv(df_updated, "aaa-nat-gas-prices.csv")
+
