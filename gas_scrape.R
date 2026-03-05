@@ -413,4 +413,7 @@ table_codes %>%
       )
     
     dw_data_to_chart(chart_data, chart_id, parse_dates = TRUE)
+
+    dw_publish_chart(chart_id)
+
   })
