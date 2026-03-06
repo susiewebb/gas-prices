@@ -533,7 +533,7 @@ dw_data_to_chart(
 
 dw_edit_chart(
   chart_id = evKey,
-  intro = paste0("Today's California national average: <b>$", ca_average,"</b><br><br>National average: $<b>", us_average)
+  intro = paste0("Today's California average: <b>$", ca_average,"</b><br><br>National average: $<b>", us_average)
 )
 
 write_csv(prices, 'CA-EV-prices.csv')
