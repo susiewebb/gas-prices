@@ -14,6 +14,7 @@ api_key <- Sys.getenv("API_KEY")
 gasTable <- Sys.getenv("GAS_TABLE_KEY")
 gasMap <- Sys.getenv("GAS_MAP_KEY")
 natKey <- Sys.getenv("NATIONAL_KEY")
+evKey <- Sys.getenv("EV_KEY")
 
 datawrapper_auth(api_key =  api_key, overwrite=TRUE)
 
@@ -486,4 +487,58 @@ dw_publish_chart(natKey)
 
 # Write back to file
 write_csv(df_updated, "aaa-nat-gas-prices.csv")
+
+
+###CA EV price updates
+
+url <- 'https://gasprices.aaa.com/ev-charging-prices/'
+response <- httr::GET(url)
+httr::stop_for_status(response)
+
+data <- httr::content(response, "text", encoding = "UTF-8")
+page <- read_html(data)
+
+us_average <- page %>%
+  html_element(".google-sheet-cell") %>%
+  html_text(trim = TRUE)
+
+us_average <- as.numeric(gsub("\\$", "", us_average))
+
+ca_average <- read_html(url) %>%
+  html_element(".ev-mobile-table") %>%
+  html_table() %>%
+  filter(State == "California") %>%
+  pull(`Cost/kWh`)
+
+prices <- read_csv('CA-EV-prices.csv')
+
+today <- paste(month(Sys.Date()),day(Sys.Date()),year(Sys.Date()) %% 100,sep = "/")
+
+if (!(today %in% prices$date)) {
+  
+  new_row <- data.frame(
+    date = today,
+   california = ca_average,
+    national = us_average
+  )
+  
+  prices <- prices %>%
+    bind_rows(new_row)
+}
+#Adding to DW
+dw_data_to_chart(
+  prices,
+  chart_id = evKey
+)
+
+dw_edit_chart(
+  chart_id = evKey,
+  intro = paste0("Today's California national average: <b>$", ca_average,"</b><br><br>National average: $<b>", us_average)
+)
+
+write_csv(prices, 'CA-EV-prices.csv')
+
+dw_publish_chart(evKey)
+
+
 
