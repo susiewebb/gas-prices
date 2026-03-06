@@ -344,11 +344,13 @@ update_one_chart_and_return_logrow <- function(state, chart_id, name) {
   m <- scrape_state_aaa(state) %>%
     metrics_map()
 
-   chatter <- sprintf(
+    chatter <- sprintf(
     "State average regular gas price now: <b>$%.3f</b><br><br>
+    Average a week ago: <b>$%.3f</b> <br><br>
 Average a month ago: <b>$%.3f</b><br><br>
 Average a year ago: <b>$%.3f</b>",
     m$regular_Current,
+    m$regular_Week,
     m$regular_Month,
     m$regular_Year
   )
