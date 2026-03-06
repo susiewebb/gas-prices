@@ -343,6 +343,15 @@ update_one_chart_and_return_logrow <- function(state, chart_id, name) {
   
   m <- scrape_state_aaa(state) %>%
     metrics_map()
+
+   chatter <- sprintf(
+    "State average regular gas price now: <b>$%.3f</b><br><br>
+Average a month ago: <b>$%.3f</b><br><br>
+Average a year ago: <b>$%.3f</b>",
+    m$regular_Current,
+    m$regular_Month,
+    m$regular_Year
+  )
   
   dw_edit_chart(
     chart_id = chart_id,
@@ -350,6 +359,7 @@ update_one_chart_and_return_logrow <- function(state, chart_id, name) {
     byline = paste0("Susie Webb/<a href='https://qredirect.htvapps.net/?redirectUri=data-journalism' target='_blank'>Get the Facts Data Team</a>"),
     source_name = "AAA",
     source_url = "aaa.com",
+    intro = chatter,
     annotate = "<i>Data will update daily and represents the previous day's average cost for regular gas."
   )
   
