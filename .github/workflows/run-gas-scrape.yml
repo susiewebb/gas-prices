@@ -69,6 +69,7 @@ jobs:
           GAS_TABLE_KEY: ${{ secrets.GAS_TABLE_KEY }}
           GAS_MAP_KEY: ${{ secrets.GAS_MAP_KEY }}
           NATIONAL_KEY: ${{ secrets.NATIONAL_KEY }}
+          EV_KEY: ${{ secrets.EV_KEY }}
 
         run: |
                 . ~/.Renviron
@@ -97,6 +98,7 @@ jobs:
             git add gas_prices.csv || true
             git add gas_data_log.csv || true
             git add aaa-nat-gas-prices.csv || true
+            git add CA-EV-prices.csv || true
         
             if git diff --cached --quiet; then
               echo "No changes to commit."
