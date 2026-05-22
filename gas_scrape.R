@@ -20,8 +20,28 @@ datawrapper_auth(api_key =  api_key, overwrite=TRUE)
 
 
 #Marking today's date
-today_head <- format(as.POSIXct(Sys.time(), tz = "America/New_York"), "%b. %d")
-today_head <- sub("\\. 0", ". ", today_head)
+now <- as.POSIXct(Sys.time(), tz = "America/New_York")
+
+month_labels <- c(
+  January = "Jan.",
+  February = "Feb.",
+  March = "March",
+  April = "April",
+  May = "May",
+  June = "June",
+  July = "July",
+  August = "Aug.",
+  September = "Sept.",
+  October = "Oct.",
+  November = "Nov.",
+  December = "Dec."
+)
+
+today_head <- paste(
+  month_labels[format(now, "%B")],
+  as.integer(format(now, "%d"))
+)
+
 today_head
 
 yesterday <- format(as.Date(with_tz(Sys.time(), tz = 'America/New_York')) - 1, "%b. %d")
