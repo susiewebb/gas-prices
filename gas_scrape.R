@@ -263,6 +263,10 @@ dw_data_to_chart(new_final_df,
 #Republishing the chart
 dw_publish_chart(gasMap)
 
+##Saving as csv
+write_csv(new_final_df, "daily-county-data.csv")
+
+
 ###Now for state-by-state maps
 dw_codes <- read_csv('codes.csv')
 
