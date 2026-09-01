@@ -99,6 +99,8 @@ jobs:
             git add gas_data_log.csv || true
             git add aaa-nat-gas-prices.csv || true
             git add CA-EV-prices.csv || true
+            git add daily-county-data.csv || true
+
         
             if git diff --cached --quiet; then
               echo "No changes to commit."
