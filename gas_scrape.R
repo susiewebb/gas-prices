@@ -384,8 +384,7 @@ Average a year ago: <b>$%.3f</b>",
     chart_id = chart_id,
     title = sprintf("%s gas prices as of %s", name, today_head),
     byline = paste0("Susie Webb/<a href='https://qredirect.htvapps.net/?redirectUri=data-journalism' target='_blank'>Get the Facts Data Team</a>"),
-    source_name = "AAA",
-    source_url = "aaa.com",
+    source_name = "AAA and OPIS, part of Dow Jones Energy",
     intro = chatter,
     annotate = "<i>Data will update daily and represents the previous day's average cost for regular gas."
   )
