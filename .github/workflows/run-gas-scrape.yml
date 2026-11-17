@@ -20,12 +20,13 @@ jobs:
           fetch-depth: 0
       - uses: r-lib/actions/setup-r@v2
         with:
-          r-version: "4.5.1"
+          r-version: "4.5.2"
           
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            libicu-dev \
             libcurl4-openssl-dev \
             libssl-dev \
             libgit2-dev \
@@ -45,9 +46,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/Rlib
-          key: ${{ runner.os }}-R-${{ hashFiles('**/scripts/*.R') }}
+          key: ${{ runner.os }}-v2-R-${{ hashFiles('**/scripts/*.R') }}
           restore-keys: |
-            ${{ runner.os }}-R-
+            ${{ runner.os }}-v2-R-
 
       - name: Install R packages
         env:
@@ -56,12 +57,9 @@ jobs:
           mkdir -p ~/Rlib
           echo 'R_LIBS_USER=~/Rlib' >> ~/.Renviron
           echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> ~/.Rprofile
-          Rscript -e 'install.packages("tidyverse", dependencies = TRUE, lib="~/Rlib")'
-          Rscript -e 'install.packages("tidycensus", dependencies = TRUE, lib="~/Rlib")'
-          Rscript -e 'install.packages(c("jsonlite", "remotes", "magick", "usethis", "V8", "tidycensus", "httr"), dependencies = TRUE, lib="~/Rlib")'
+          Rscript -e 'install.packages(c("tidyverse", "tidycensus", "jsonlite", "remotes", "magick", "usethis", "V8", "httr"), dependencies = TRUE, lib="~/Rlib")'
           Rscript -e 'remotes::install_github("munichrocker/DatawRappr", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
           Rscript -e '.libPaths("~/Rlib"); if (!require("tidyverse", lib.loc = "~/Rlib")) stop("tidyverse did not install")'
-
 
       - name: Run scraper
         env:
@@ -70,46 +68,40 @@ jobs:
           GAS_MAP_KEY: ${{ secrets.GAS_MAP_KEY }}
           NATIONAL_KEY: ${{ secrets.NATIONAL_KEY }}
           EV_KEY: ${{ secrets.EV_KEY }}
-
         run: |
-                . ~/.Renviron
-                Rscript "gas_scrape.R"
-      
+          . ~/.Renviron
+          Rscript "gas_scrape.R"
 
       - name: Commit and rebase-push if changed
         env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-            REF_NAME: ${{ github.ref_name }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-            set -e
-        
-            git config user.name  "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        
-            TARGET_BRANCH="${REF_NAME:-$DEFAULT_BRANCH}"
-            echo "Target branch: $TARGET_BRANCH"
-        
-            # Make sure we're up to date with remote
-            git fetch origin "$TARGET_BRANCH"
-            git checkout "$TARGET_BRANCH"
-        
-            echo "Staging expected CSVs…"
-            git add gas_prices.csv || true
-            git add gas_data_log.csv || true
-            git add aaa-nat-gas-prices.csv || true
-            git add CA-EV-prices.csv || true
-            git add daily-county-data.csv || true
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-        
-            if git diff --cached --quiet; then
-              echo "No changes to commit."
-              exit 0
-            fi
-        
-            git commit -m "chore(data): refresh airline CSVs on $(date -u +'%Y-%m-%d')"
-        
-            git pull --rebase origin "$TARGET_BRANCH"
-        
-            echo "Pushing…"
-            git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}" HEAD:"$TARGET_BRANCH"
+          TARGET_BRANCH="${REF_NAME:-$DEFAULT_BRANCH}"
+          echo "Target branch: $TARGET_BRANCH"
+
+          git fetch origin "$TARGET_BRANCH"
+          git checkout "$TARGET_BRANCH"
+
+          echo "Staging expected CSVs…"
+          git add gas_prices.csv || true
+          git add gas_data_log.csv || true
+          git add aaa-nat-gas-prices.csv || true
+          git add CA-EV-prices.csv || true
+          git add daily-county-data.csv || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore(data): refresh airline CSVs on $(date -u +'%Y-%m-%d')"
+          git pull --rebase origin "$TARGET_BRANCH"
+
+          echo "Pushing…"
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}" HEAD:"$TARGET_BRANCH"
