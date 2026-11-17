@@ -27,6 +27,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             libicu-dev \
+            libpng-dev \
+            zlib1g-dev \
             libcurl4-openssl-dev \
             libssl-dev \
             libgit2-dev \
@@ -46,9 +48,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/Rlib
-          key: ${{ runner.os }}-v2-R-${{ hashFiles('**/scripts/*.R') }}
+          key: ${{ runner.os }}-v3-R-${{ hashFiles('**/scripts/*.R') }}
           restore-keys: |
-            ${{ runner.os }}-v2-R-
+            ${{ runner.os }}-v3-R-
 
       - name: Install R packages
         env:
@@ -57,9 +59,15 @@ jobs:
           mkdir -p ~/Rlib
           echo 'R_LIBS_USER=~/Rlib' >> ~/.Renviron
           echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> ~/.Rprofile
-          Rscript -e 'install.packages(c("tidyverse", "tidycensus", "jsonlite", "remotes", "magick", "usethis", "V8", "httr"), dependencies = TRUE, lib="~/Rlib")'
-          Rscript -e 'remotes::install_github("munichrocker/DatawRappr", lib="~/Rlib", auth_token=Sys.getenv("GITHUB_PAT"))'
-          Rscript -e '.libPaths("~/Rlib"); if (!require("tidyverse", lib.loc = "~/Rlib")) stop("tidyverse did not install")'
+
+          Rscript -e '
+            .libPaths(c("~/Rlib", .libPaths()))
+            install.packages(c("tidyverse", "tidycensus", "jsonlite", "remotes", "magick", "usethis", "V8", "httr"), dependencies = TRUE, lib = "~/Rlib")
+            if (!requireNamespace("usethis", quietly = TRUE)) stop("usethis failed to install")
+            remotes::install_github("munichrocker/DatawRappr", lib = "~/Rlib", auth_token = Sys.getenv("GITHUB_PAT"))
+            library(tidyverse)
+            library(DatawRappr)
+          '
 
       - name: Run scraper
         env:
@@ -100,7 +108,7 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore(data): refresh airline CSVs on $(date -u +'%Y-%m-%d')"
+          git commit -m "chore(data): refresh gas CSVs on $(date -u +'%Y-%m-%d')"
           git pull --rebase origin "$TARGET_BRANCH"
 
           echo "Pushing…"
